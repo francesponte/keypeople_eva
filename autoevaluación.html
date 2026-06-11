@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autoevaluación · Laboratorio de Conversaciones Clave · Atento</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple:    #3B2447;
+    --lapis:     #00558C;
+    --azure:     #88D2F8;
+    --tangerine: #EFA27F;
+    --persian:   #00A79D;
+    --overcast:  #E3EDED;
+    --davy:      #595959;
+    --silver:    #A3A3A3;
+    --light-bg:  #F7F6F9;
+    --white:     #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Poppins', sans-serif; background: var(--light-bg); color: var(--davy); min-height: 100vh; }
+
+  /* HEADER */
+  .site-header { background: var(--purple); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(59,36,71,0.18); }
+  .site-header-inner { max-width: 860px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; flex-direction: column; gap: 1px; }
+  .brand-name { color: var(--white); font-weight: 700; font-size: 18px; }
+  .brand-sub  { color: var(--azure); font-weight: 300; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-label { color: var(--azure); font-size: 10px; font-weight: 500; white-space: nowrap; }
+  .progress-bar-outer { width: 120px; height: 4px; background: rgba(136,210,248,0.2); border-radius: 99px; }
+  .progress-bar-inner { height: 100%; background: var(--tangerine); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+
+  /* HERO */
+  .hero { background: var(--purple); padding: 48px 24px 56px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 70% 40%, rgba(136,210,248,0.08) 0%, transparent 60%); }
+  .plus-bg { position: absolute; inset: 0; color: rgba(136,210,248,0.12); font-size: 14px; line-height: 22px; letter-spacing: 18px; overflow: hidden; pointer-events: none; word-break: break-all; }
+  .hero-inner { max-width: 860px; margin: 0 auto; position: relative; }
+  .hero-tag { display: inline-block; background: rgba(136,210,248,0.15); color: var(--azure); font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 99px; margin-bottom: 16px; border: 1px solid rgba(136,210,248,0.25); }
+  .hero h1 { color: var(--white); font-size: clamp(22px, 4vw, 32px); font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+  .hero h1 span { color: var(--tangerine); }
+  .hero-sub { color: var(--azure); font-weight: 300; font-size: 14px; margin-bottom: 28px; line-height: 1.6; max-width: 560px; }
+  .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+  .hero-chip { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.7); font-size: 12px; }
+  .hero-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tangerine); flex-shrink: 0; }
+
+  /* MAIN */
+  .main { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* SECTIONS */
+  .section { background: var(--white); border-radius: 12px; margin-bottom: 24px; overflow: hidden; box-shadow: 0 1px 4px rgba(59,36,71,0.06); opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .section.visible { opacity: 1; transform: translateY(0); }
+  .section-header { padding: 18px 24px 14px; border-bottom: 1px solid var(--overcast); display: flex; align-items: flex-start; gap: 14px; }
+  .section-num { width: 30px; height: 30px; border-radius: 50%; background: var(--purple); color: var(--azure); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .section-title-wrap { flex: 1; }
+  .section-label { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--persian); margin-bottom: 3px; }
+  .section-title { font-size: 16px; font-weight: 600; color: var(--purple); line-height: 1.3; }
+  .section-body { padding: 22px 24px; }
+
+  /* INTRO BOX */
+  .intro-box { background: var(--light-bg); border-radius: 8px; padding: 16px 18px; border-left: 4px solid var(--tangerine); margin-bottom: 22px; font-size: 13px; color: var(--davy); line-height: 1.7; }
+  .intro-box strong { color: var(--purple); }
+
+  /* TEXT INPUTS */
+  .field-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media(max-width:560px) { .field-group { grid-template-columns: 1fr; } }
+  .field-wrap { display: flex; flex-direction: column; gap: 5px; }
+  .field-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--silver); }
+  .field-input { border: 1.5px solid var(--overcast); border-radius: 8px; padding: 10px 12px; font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--purple); outline: none; background: var(--white); transition: border-color 0.2s; }
+  .field-input:focus { border-color: var(--purple); }
+  .field-input::placeholder { color: var(--overcast); }
+
+  /* DIMENSION ROWS */
+  .dimension { border-bottom: 1px solid var(--overcast); padding: 16px 0; }
+  .dimension:last-child { border-bottom: none; padding-bottom: 0; }
+  .dim-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+  .dim-num { width: 26px; height: 26px; border-radius: 50%; background: var(--purple); color: var(--azure); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .dim-text { flex: 1; }
+  .dim-name { font-size: 14px; font-weight: 600; color: var(--purple); margin-bottom: 3px; }
+  .dim-desc { font-size: 12px; color: var(--silver); line-height: 1.5; }
+  .scale-wrap { display: flex; align-items: center; gap: 8px; padding-left: 38px; }
+  .scale-label { font-size: 10px; color: var(--silver); white-space: nowrap; }
+  .scale-buttons { display: flex; gap: 6px; flex: 1; }
+  .scale-btn { flex: 1; height: 36px; border: 1.5px solid var(--overcast); border-radius: 8px; background: var(--white); cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--silver); transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .scale-btn:hover { border-color: var(--purple); color: var(--purple); background: var(--light-bg); }
+  .scale-btn.sel-1 { background: #f8e8e0; border-color: var(--tangerine); color: var(--tangerine); }
+  .scale-btn.sel-2 { background: #fdf1eb; border-color: #e8b898; color: #c87a50; }
+  .scale-btn.sel-3 { background: #e8f4f3; border-color: var(--persian); color: var(--persian); }
+  .scale-btn.sel-4 { background: #dff0ef; border-color: #00897d; color: #00897d; }
+  .scale-btn.sel-5 { background: #d4ebe9; border-color: #006b62; color: #006b62; }
+
+  /* RESULT PREVIEW */
+  .result-preview { margin-top: 20px; display: none; }
+  .result-preview.show { display: block; }
+  .result-bar { background: var(--light-bg); border-radius: 10px; padding: 16px 18px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+  .result-bar-label { font-size: 12px; font-weight: 500; color: var(--purple); width: 180px; flex-shrink: 0; }
+  .result-bar-track { flex: 1; height: 8px; background: var(--overcast); border-radius: 99px; overflow: hidden; }
+  .result-bar-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+  .result-bar-val { font-size: 13px; font-weight: 600; color: var(--purple); width: 20px; text-align: right; }
+  .result-insight { background: var(--purple); border-radius: 10px; padding: 16px 18px; margin-top: 12px; }
+  .result-insight-label { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--azure); margin-bottom: 8px; }
+  .insight-row { display: flex; gap: 12px; }
+  .insight-item { flex: 1; background: rgba(255,255,255,0.08); border-radius: 8px; padding: 12px; }
+  .insight-tag { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .insight-tag.fuerte { color: var(--persian); }
+  .insight-tag.oport  { color: var(--tangerine); }
+  .insight-name { font-size: 13px; font-weight: 500; color: var(--white); }
+
+  /* FOCO SECTION */
+  .foco-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  @media(max-width:560px) { .foco-grid { grid-template-columns: 1fr; } }
+  .foco-card { background: var(--light-bg); border-radius: 10px; padding: 16px; border-left: 4px solid var(--overcast); }
+  .foco-card.fuerte { border-left-color: var(--persian); }
+  .foco-card.oport  { border-left-color: var(--tangerine); }
+  .foco-card-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .foco-card.fuerte .foco-card-label { color: var(--persian); }
+  .foco-card.oport  .foco-card-label { color: var(--tangerine); }
+  .foco-card-hint { font-size: 11.5px; color: var(--silver); margin-bottom: 10px; line-height: 1.5; }
+  textarea { width: 100%; border: 1.5px solid var(--overcast); border-radius: 8px; padding: 12px 14px; font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--purple); resize: vertical; min-height: 72px; outline: none; transition: border-color 0.2s; background: var(--white); }
+  textarea:focus { border-color: var(--purple); }
+  textarea::placeholder { color: var(--overcast); }
+
+  /* INTENCION */
+  .intencion-box { background: linear-gradient(135deg, var(--purple) 0%, #2a1a35 100%); border-radius: 10px; padding: 22px; position: relative; overflow: hidden; }
+  .intencion-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--tangerine); margin-bottom: 8px; }
+  .intencion-prompt { font-size: 14px; font-weight: 400; color: var(--white); line-height: 1.6; margin-bottom: 12px; }
+  .intencion-prompt em { color: var(--azure); font-style: normal; font-weight: 500; }
+  textarea.dark { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: var(--white); }
+  textarea.dark:focus { border-color: var(--azure); }
+  textarea.dark::placeholder { color: rgba(255,255,255,0.25); }
+
+  /* CTA */
+  .cta-wrap { text-align: center; margin-top: 32px; }
+  .cta-btn { background: var(--tangerine); color: var(--white); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 13px; border: none; padding: 14px 36px; border-radius: 99px; cursor: pointer; transition: background 0.2s, transform 0.1s; box-shadow: 0 4px 16px rgba(239,162,127,0.35); }
+  .cta-btn:hover { background: #e08d65; transform: translateY(-1px); }
+  .complete-msg { display: none; background: var(--persian); color: var(--white); border-radius: 12px; padding: 28px 24px; text-align: center; margin-top: 24px; }
+  .complete-msg h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .complete-msg p  { font-size: 13px; font-weight: 300; opacity: 0.9; line-height: 1.6; }
+
+  /* GUIDE */
+  .guide-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 4px; }
+  @media(max-width:560px) { .guide-grid { grid-template-columns: 1fr; } }
+  .guide-card { border-radius: 10px; overflow: hidden; border: 1px solid var(--overcast); }
+  .guide-card-top { padding: 10px 14px; display: flex; align-items: center; justify-content: center; }
+  .guide-score { font-size: 16px; font-weight: 700; color: var(--white); }
+  .guide-card-body { padding: 12px 14px; background: var(--white); }
+  .guide-title { font-size: 12px; font-weight: 600; color: var(--purple); margin-bottom: 4px; }
+  .guide-desc  { font-size: 11px; color: var(--davy); line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <div class="brand">
+      <span class="brand-name">Atento</span>
+      <span class="brand-sub">Key People · Autoevaluación</span>
+    </div>
+    <div class="progress-wrap">
+      <span class="progress-label" id="progress-label">0 de 3 secciones</span>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" id="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="plus-bg" aria-hidden="true">+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +</div>
+  <div class="hero-inner">
+    <span class="hero-tag">Módulo 1 · Apertura y encuadre</span>
+    <h1>Mi punto de partida <span>conversacional</span></h1>
+    <p class="hero-sub">Valora tus habilidades hoy — honestamente. No hay respuestas correctas. Este ejercicio es solo para ti.</p>
+    <div class="hero-meta">
+      <span class="hero-chip"><span class="hero-chip-dot"></span>Individual y confidencial</span>
+      <span class="hero-chip"><span class="hero-chip-dot"></span>3 secciones · ~10 min</span>
+      <span class="hero-chip"><span class="hero-chip-dot"></span>Complétalo al inicio del laboratorio</span>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+
+  <!-- SECCIÓN 0: DATOS -->
+  <div class="section visible" id="s0">
+    <div class="section-header">
+      <div class="section-num" style="background:var(--persian); font-size:14px;">✦</div>
+      <div class="section-title-wrap">
+        <div class="section-label">Antes de empezar</div>
+        <div class="section-title">Tus datos</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="field-group">
+        <div class="field-wrap">
+          <label class="field-label" for="nombre">Apellidos y nombres</label>
+          <input class="field-input" type="text" id="nombre" placeholder="Tu nombre completo" />
+        </div>
+        <div class="field-wrap">
+          <label class="field-label" for="cargo">Cargo actual</label>
+          <input class="field-input" type="text" id="cargo" placeholder="Tu rol o cargo" />
+        </div>
+        <div class="field-wrap">
+          <label class="field-label" for="area">Área / Programa</label>
+          <input class="field-input" type="text" id="area" placeholder="Tu área u operación" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1: AUTOEVALUACIÓN -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title-wrap">
+        <div class="section-label">Mis habilidades hoy</div>
+        <div class="section-title">¿Dónde estoy en cada dimensión?</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="intro-box">
+        Valora del <strong>1</strong> al <strong>5</strong> tu nivel actual. <strong>1</strong> = necesito trabajarlo · <strong>3</strong> = en desarrollo · <strong>5</strong> = lo hago con soltura.<br>
+        Sé honesto/a — nadie más verá esto antes del laboratorio.
+      </div>
+
+      <div id="dimensions-container"></div>
+
+      <!-- Result preview -->
+      <div class="result-preview" id="result-preview">
+        <div style="font-size:10px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--persian); margin-bottom:10px;">Tu perfil actual</div>
+        <div id="bars-container"></div>
+        <div class="result-insight" id="insight-box" style="display:none;">
+          <div class="result-insight-label">Tu lectura rápida</div>
+          <div class="insight-row">
+            <div class="insight-item">
+              <div class="insight-tag fuerte">Tu fortaleza</div>
+              <div class="insight-name" id="insight-fuerte">—</div>
+            </div>
+            <div class="insight-item">
+              <div class="insight-tag oport">Tu oportunidad</div>
+              <div class="insight-name" id="insight-oport">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: FOCO -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title-wrap">
+        <div class="section-label">Mi foco para hoy</div>
+        <div class="section-title">Elige con qué quieres trabajar</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <p style="font-size:13px; color:var(--davy); line-height:1.7; margin-bottom:18px;">Con tus puntajes en mente, completa lo siguiente. Esto será tu brújula durante el laboratorio.</p>
+
+      <div class="foco-grid">
+        <div class="foco-card fuerte">
+          <div class="foco-card-label">Mi dimensión más fuerte</div>
+          <div class="foco-card-hint">La habilidad donde me siento más seguro/a hoy — mi punto de apoyo.</div>
+          <textarea id="r_fuerte" placeholder="Escribe la habilidad y por qué te sientes fuerte ahí…" oninput="updateProgress()"></textarea>
+        </div>
+        <div class="foco-card oport">
+          <div class="foco-card-label">Mi mayor oportunidad</div>
+          <div class="foco-card-hint">La habilidad que más quiero desarrollar en este laboratorio.</div>
+          <textarea id="r_oport" placeholder="Escribe la habilidad y por qué quieres trabajarla…" oninput="updateProgress()"></textarea>
+        </div>
+      </div>
+
+      <div class="intencion-box">
+        <div class="intencion-label">La conversación que quiero mejorar</div>
+        <p class="intencion-prompt">Si pudieras mejorar <em>una sola conversación</em> en las próximas semanas, ¿cuál sería y con quién?</p>
+        <textarea class="dark" id="r_conv" placeholder="Descríbela con la mayor especificidad posible…" rows="3" oninput="updateProgress()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3: CÓMO LEER TU RESULTADO -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title-wrap">
+        <div class="section-label">Guía de interpretación</div>
+        <div class="section-title">Cómo leer tu resultado</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <p style="font-size:13px; color:var(--davy); line-height:1.7; margin-bottom:16px;">Cada puntaje te dice algo diferente sobre cómo aprovechar mejor las próximas horas.</p>
+      <div class="guide-grid">
+        <div class="guide-card">
+          <div class="guide-card-top" style="background:var(--tangerine);">
+            <span class="guide-score">1 – 2</span>
+          </div>
+          <div class="guide-card-body">
+            <div class="guide-title">Área de alta oportunidad</div>
+            <p class="guide-desc">Esta habilidad es tu prioridad hoy. Presta atención especial a las experiencias que la trabajen directamente.</p>
+          </div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card-top" style="background:var(--lapis);">
+            <span class="guide-score">3</span>
+          </div>
+          <div class="guide-card-body">
+            <div class="guide-title">En desarrollo</div>
+            <p class="guide-desc">Ya tienes una base. Con práctica deliberada hoy puedes dar un salto significativo.</p>
+          </div>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card-top" style="background:var(--persian);">
+            <span class="guide-score">4 – 5</span>
+          </div>
+          <div class="guide-card-body">
+            <div class="guide-title">Fortaleza personal</div>
+            <p class="guide-desc">Úsala como punto de apoyo. También observa cómo otros la están desarrollando.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <button class="cta-btn" onclick="completar()">Enviar y cerrar mi autoevaluación →</button>
+    <p style="font-size:11px; color:var(--silver); margin-top:10px;">Tus respuestas se guardan automáticamente al enviar.</p>
+  </div>
+
+  <div class="complete-msg" id="complete-msg">
+    <h3>¡Listo — ya tienes tu punto de partida 🎯</h3>
+    <p>Tu autoevaluación fue registrada.<br>Ahora el laboratorio tiene sentido para ti — sabes desde dónde partes.</p>
+  </div>
+
+</main>
+
+<script>
+const dims = [
+  { id: 'd1', name: 'Claridad conversacional',   desc: 'Comunico mis mensajes de forma directa, estructurada y sin ambigüedad.' },
+  { id: 'd2', name: 'Escucha activa',            desc: 'Escucho antes de responder o emitir conclusiones.' },
+  { id: 'd3', name: 'Feedback',                  desc: 'Entrego retroalimentación basada en evidencia, orientada a la mejora.' },
+  { id: 'd4', name: 'Coaching',                  desc: 'Uso preguntas para promover reflexión en lugar de resolver por otros.' },
+  { id: 'd5', name: 'Conversaciones difíciles',  desc: 'Abordo con foco y calma conversaciones que generan incomodidad.' },
+  { id: 'd6', name: 'Acuerdos y seguimiento',    desc: 'Cierro conversaciones con compromisos concretos y hago seguimiento.' },
+  { id: 'd7', name: 'Gestión emocional',         desc: 'Mantengo la calma y el foco incluso cuando la conversación se tensa.' },
+  { id: 'd8', name: 'Adaptación al interlocutor',desc: 'Ajusto mi estilo según la persona y el contexto de cada conversación.' },
+];
+
+const scores = {};
+const barColors = ['#EFA27F','#e8a870','#00A79D','#008f87','#006b62'];
+
+// Build dimension rows
+const container = document.getElementById('dimensions-container');
+dims.forEach((d, i) => {
+  const row = document.createElement('div');
+  row.className = 'dimension';
+  row.innerHTML = `
+    <div class="dim-top">
+      <div class="dim-num">${i+1}</div>
+      <div class="dim-text">
+        <div class="dim-name">${d.name}</div>
+        <div class="dim-desc">${d.desc}</div>
+      </div>
+    </div>
+    <div class="scale-wrap">
+      <span class="scale-label">Necesito trabajarlo</span>
+      <div class="scale-buttons" id="scale-${d.id}">
+        ${[1,2,3,4,5].map(v => `<button class="scale-btn" data-val="${v}" onclick="selectScore('${d.id}',${v},this)">${v}</button>`).join('')}
+      </div>
+      <span class="scale-label">Lo hago con soltura</span>
+    </div>
+  `;
+  container.appendChild(row);
+});
+
+// Build result bars
+const barsContainer = document.getElementById('bars-container');
+dims.forEach(d => {
+  const bar = document.createElement('div');
+  bar.className = 'result-bar';
+  bar.id = 'bar-' + d.id;
+  bar.style.display = 'none';
+  bar.innerHTML = `
+    <span class="result-bar-label">${d.name}</span>
+    <div class="result-bar-track"><div class="result-bar-fill" id="fill-${d.id}" style="width:0%; background:var(--silver);"></div></div>
+    <span class="result-bar-val" id="val-${d.id}">—</span>
+  `;
+  barsContainer.appendChild(bar);
+});
+
+function selectScore(dimId, val, btn) {
+  const row = document.getElementById('scale-' + dimId);
+  row.querySelectorAll('.scale-btn').forEach(b => {
+    b.className = 'scale-btn';
+  });
+  btn.className = `scale-btn sel-${val}`;
+  scores[dimId] = val;
+
+  // Update bar
+  const bar = document.getElementById('bar-' + dimId);
+  bar.style.display = 'flex';
+  document.getElementById('fill-' + dimId).style.width = (val * 20) + '%';
+  document.getElementById('fill-' + dimId).style.background = barColors[val - 1];
+  document.getElementById('val-' + dimId).textContent = val;
+
+  document.getElementById('result-preview').classList.add('show');
+  updateInsights();
+  updateProgress();
+}
+
+function updateInsights() {
+  const filled = dims.filter(d => scores[d.id] !== undefined);
+  if (filled.length < 4) {
+    document.getElementById('insight-box').style.display = 'none';
+    return;
+  }
+  const sorted = [...filled].sort((a,b) => scores[b.id] - scores[a.id]);
+  document.getElementById('insight-fuerte').textContent = sorted[0].name;
+  document.getElementById('insight-oport').textContent = sorted[sorted.length-1].name;
+  document.getElementById('insight-box').style.display = 'block';
+}
+
+function updateProgress() {
+  const scoredCount = dims.filter(d => scores[d.id] !== undefined).length;
+  const textFields = ['r_fuerte','r_oport','r_conv'];
+  const textFilled = textFields.filter(id => document.getElementById(id)?.value.trim().length > 5).length;
+
+  let sections = 0;
+  if (scoredCount >= 4) sections++;
+  if (textFilled >= 1) sections++;
+  if (scoredCount === 8) sections++;
+
+  const pct = Math.round(((scoredCount / 8) * 0.6 + (textFilled / 3) * 0.4) * 100);
+  document.getElementById('progress-bar').style.width = Math.min(pct, 95) + '%';
+  document.getElementById('progress-label').textContent = sections + ' de 3 secciones';
+}
+
+function completar() {
+  const scoredCount = dims.filter(d => scores[d.id] !== undefined).length;
+  if (scoredCount < 5) {
+    alert('Valora al menos 5 de las 8 dimensiones antes de enviar.');
+    return;
+  }
+
+  const FORM_ID = '1FAIpQLSehR9HYZH_Baq0JXP3X45008AoNmHy7aDr-eaRaSGMyzo51aw';
+
+  const formData = new FormData();
+  formData.append('entry.928242653',  document.getElementById('nombre')?.value || '');
+  formData.append('entry.1367537052', document.getElementById('cargo')?.value || '');
+  formData.append('entry.324160',     document.getElementById('area')?.value || '');
+
+  // Dimension scores — in order
+  const dimEntries = [
+    'entry.1448903099', // Claridad conversacional
+    'entry.831672956',  // Escucha activa
+    'entry.1566370190', // Feedback
+    'entry.1981067753', // Coaching
+    'entry.1392058489', // Conversaciones difíciles
+    'entry.1043582051', // Acuerdos y seguimiento
+    'entry.955405007',  // Gestión emocional
+    'entry.1656097376', // Adaptación al interlocutor
+  ];
+  dims.forEach((d, i) => {
+    formData.append(dimEntries[i], scores[d.id] || '');
+  });
+
+  formData.append('entry.249825574',  document.getElementById('r_fuerte')?.value || '');
+  formData.append('entry.1077588744', document.getElementById('r_oport')?.value || '');
+  formData.append('entry.2142366670', document.getElementById('r_conv')?.value || '');
+
+  fetch('https://docs.google.com/forms/d/e/' + FORM_ID + '/formResponse', {
+    method: 'POST', mode: 'no-cors', body: formData
+  }).catch(() => {});
+
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('progress-label').textContent = '3 de 3 secciones';
+  document.querySelector('.cta-wrap').style.display = 'none';
+  const msg = document.getElementById('complete-msg');
+  msg.style.display = 'block';
+  msg.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Intersection observer
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+updateProgress();
+</script>
+</body>
+</html>
